@@ -21,17 +21,17 @@ source "virtualbox-iso" "debian" {
   iso_checksum           = "file:https://cdimage.debian.org/cdimage/release/12.11.0/amd64/iso-cd/SHA256SUMS"
   iso_target_path        = "iso"
 
-  ssh_username           = "packer"
-  ssh_password           = "packer"
+  ssh_username           = "vagrant"
+  ssh_password           = "vagrant"
   ssh_timeout            = "60m"
 
   boot_wait              = "5s"
-  shutdown_command       = "sudo -S shutdown -P now"
+  shutdown_command       = "echo 'vagrant' | sudo -S shutdown -P now"
 
   http_directory         = "http"
   boot_command = [
     "<esc>",
-    " auto preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/<enter>"]
+    " auto preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed.cfg<enter>"]
 }
 
 build {
