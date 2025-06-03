@@ -4,6 +4,10 @@ packer {
       source  = "github.com/hashicorp/virtualbox"
       version = "~> 1"
     }
+    vagrant = {
+      source  = "github.com/hashicorp/vagrant"
+      version = "~> 1"
+    }
   }
 }
 
@@ -14,8 +18,8 @@ source "virtualbox-iso" "debian" {
   hard_drive_interface   = "sata"
   guest_os_type          = "Debian_64"
   vm_name                = "debian-12.11"
-# headless               = true
-# guest_additions_mode   = "attach"
+  # headless               = true
+  guest_additions_mode   = "upload"
 
   iso_url                = "https://cdimage.debian.org/cdimage/release/12.11.0/amd64/iso-cd/debian-12.11.0-amd64-netinst.iso"
   iso_checksum           = "file:https://cdimage.debian.org/cdimage/release/12.11.0/amd64/iso-cd/SHA256SUMS"
@@ -26,7 +30,7 @@ source "virtualbox-iso" "debian" {
   ssh_timeout            = "60m"
 
   boot_wait              = "5s"
-  shutdown_command       = "echo 'vagrant' | sudo -S shutdown -P now"
+  shutdown_command       = "sudo shutdown -P now"
 
   http_directory         = "http"
   boot_command = [
@@ -36,4 +40,13 @@ source "virtualbox-iso" "debian" {
 
 build {
   sources = ["sources.virtualbox-iso.debian"]
+
+  provisioner "shell" {
+    script = "./scripts/inst-vbox-guest-add.sh"
+  }
+
+  post-processor "vagrant" {
+    keep_input_artifact = true
+    output = "./vagrant_output/{{.BuildName}}-12.11.box"
+  }
 }
