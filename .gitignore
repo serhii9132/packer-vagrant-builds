@@ -1,5 +1,4 @@
+build
 iso
-output*
 packer_cache
 .vagrant
-vagrant_output
