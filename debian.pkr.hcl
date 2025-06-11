@@ -130,7 +130,6 @@ source "virtualbox-iso" "debian" {
   guest_os_type          = var.guest_os_type
   firmware               = var.firmware_type
   vm_name                = var.vm_name
-  # headless               = true
 
   guest_additions_mode   = var.guest_additions_mode
   format                 = var.export_format
@@ -153,10 +152,12 @@ source "virtualbox-iso" "debian" {
     "<wait><wait><wait>c<wait><wait><wait>",
     "linux /install.amd/vmlinuz ",
     "auto=true ",
-    "url=http://192.168.0.10:8000/preseed.cfg ",
-    "hostname=${var.hostname} ",
-    "domain=${var.domain} ",
+    "url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed.cfg ",
     "interface=auto ",
+    # "DEBCONF_DEBUG=5 ",
+    "netcfg/hostname=${var.hostname} ",
+    "netcfg/get_hostname=${var.hostname} ",
+    "netcfg/get_domain=${var.domain} ",
     "vga=788 noprompt quiet --<enter>",
     "initrd /install.amd/initrd.gz<enter>",
     "boot<enter>"
@@ -173,9 +174,9 @@ build {
     ]
   }
 
-  # post-processor "vagrant" {
-  #   compression_level    = 6
-  #   keep_input_artifact  = true
-  #   output               = "${local.output_directory}/${var.vm_name}.box"
-  # }
+  post-processor "vagrant" {
+    compression_level    = 6
+    keep_input_artifact  = true
+    output               = "${local.output_directory}/${var.vm_name}.box"
+  }
 }
