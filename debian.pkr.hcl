@@ -10,6 +10,10 @@ variable "disk_size" {
   type = number
 }
 
+variable "gfx_vram_size" {
+  type = number
+}
+
 variable "hard_drive_interface" {
   type = string
 }
@@ -100,7 +104,7 @@ variable "boot_wait" {
 }
 
 locals {
-  formatted_datetime = formatdate("YYYY-MM-DD_hh_mm_ss", timestamp())
+  formatted_datetime = formatdate("YYYY-MM-DD_hh-mm", timestamp())
   output_directory = "build/${local.formatted_datetime}"
 }
 
@@ -121,6 +125,11 @@ source "virtualbox-iso" "debian" {
   cpus                   = var.cpus
   memory                 = var.memory
   disk_size              = var.disk_size
+  gfx_vram_size          = var.gfx_vram_size
+  vboxmanage = [
+    [ "modifyvm", "{{.Name}}", "--audio", "none" ],
+    [ "modifyvm", "{{.Name}}", "--vrde", "off" ],
+  ]
 
   hard_drive_interface     = var.hard_drive_interface
   hard_drive_discard       = var.hard_drive_discard

@@ -1,6 +1,7 @@
 cpus                  = 4
 memory                = 4096
 disk_size             = 60000
+gfx_vram_size         = 16
 
 hard_drive_interface      = "sata"
 hard_drive_discard        = false
