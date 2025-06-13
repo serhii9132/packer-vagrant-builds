@@ -1,2 +1,2 @@
-sudo dd if=/dev/zero of=/zerofile bs=1M status=progress
+sudo dd if=/dev/zero of=/zerofile bs=1M
 sudo rm /zerofile
