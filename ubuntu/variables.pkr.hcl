@@ -1,6 +1,11 @@
 locals {
   output_directory = "builds/${formatdate("YYYY-MM-DD_hh-mm", timestamp())}"
-  preseed_file     = "http/preseed.cfg"
+
+  http_dir = "/http"
+  autoinstall_files = {
+    "/meta-data" = file("${local.http_dir}/meta-data")
+    "/user-data" = templatefile("${local.http_dir}/user-data.pkrtpl.hcl", { var = var })
+  }
 }
 
 variable "cpus" {
@@ -74,6 +79,10 @@ variable "export_format" {
 variable "vm_name" {
   type    = string
   default = "ubuntu-24.04.2-lts"
+}
+
+variable "timezone" {
+  type    = string
 }
 
 variable "ssh_username" {

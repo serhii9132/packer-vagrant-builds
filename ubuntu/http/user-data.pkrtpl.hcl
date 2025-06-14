@@ -17,8 +17,6 @@ autoinstall:
     allow-pw: true
 
   packages:
-    - bash-completion
-    - nano
     - bzip2
     - gcc
     - make
@@ -26,19 +24,19 @@ autoinstall:
     - perl
     - build-essential
 
-  timezone: "Europe/Kyiv"
+  timezone: ${var.timezone}
 
   updates: all
     
   late-commands:
     - lvextend -l +100%FREE /dev/ubuntu-vg/ubuntu-lv
     - resize2fs /dev/mapper/ubuntu--vg-ubuntu--lv
-    - echo "vagrant ALL=(ALL:ALL) NOPASSWD:ALL" > /target/etc/sudoers.d/vagrant
+    - echo "${var.ssh_username} ALL=(ALL:ALL) NOPASSWD:ALL" > /target/etc/sudoers.d/${var.ssh_username}
 
   user-data:
-    hostname: ubuntu-host
+    hostname: ${var.hostname}
     users:
-      - name: vagrant
+      - name: ${var.ssh_username}
         passwd: '$6$dYP4Mnb3ucA/f3j0$nY5YHd3FF/vCve8mYN4c0N1T0kTe.zN5bHwpaoTbSAY.rwtbHVSFtrFotgaW8A1DJS/AKc7PUSmlKHu9.rRpH0'
         shell: /bin/bash
         lock_passwd: False

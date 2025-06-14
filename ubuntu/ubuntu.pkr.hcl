@@ -42,7 +42,7 @@ source "virtualbox-iso" "ubuntu" {
   iso_checksum           = var.iso_checksum
   iso_target_path        = "${var.iso_source}/${var.iso_file}"
   output_directory       = local.output_directory
-  http_directory         = var.http_directory
+  http_content           = local.autoinstall_files
 
   boot_wait              = var.boot_wait
   shutdown_command       = var.shutdown_command
