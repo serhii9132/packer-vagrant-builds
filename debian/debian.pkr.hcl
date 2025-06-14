@@ -42,7 +42,7 @@ source "virtualbox-iso" "debian" {
   iso_checksum           = var.iso_checksum
   iso_target_path        = "${var.iso_source}/${var.iso_file}"
   output_directory       = local.output_directory
-  http_content           = { "/${local.preseed_file}" = templatefile("/${local.preseed_file}", { var = var }) }
+  http_content           = local.preseed_file
 
   boot_wait              = var.boot_wait
   shutdown_command       = var.shutdown_command
@@ -51,7 +51,7 @@ source "virtualbox-iso" "debian" {
     "<wait><wait><wait>c<wait><wait><wait>",
     "linux /install.amd/vmlinuz ",
     "auto=true ",
-    "url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/${local.preseed_file} ",
+    "url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/${local.preseed_filename} ",
     "interface=auto ",
     # "DEBCONF_DEBUG=5 ",
     "netcfg/hostname=${var.hostname} ",

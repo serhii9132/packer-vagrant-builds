@@ -24,7 +24,7 @@ d-i mirror/http/proxy string
 d-i clock-setup/utc boolean true
 
 # Set timezone
-d-i time/zone string Europe/Kyiv
+d-i time/zone string ${var.timezone}
 
 # Create root uer 
 d-i passwd/root-login boolean true

@@ -1,6 +1,11 @@
 locals {
   output_directory = "builds/${formatdate("YYYY-MM-DD_hh-mm", timestamp())}"
-  preseed_file     = "http/preseed.cfg"
+
+  preseed_filename = "preseed.cfg"
+  http_dir = "/http"
+  preseed_file = {
+    "/${local.preseed_filename}" = templatefile("${local.http_dir}/preseed.pkrtpl.hcl", { var = var })
+  }
 }
 
 variable "cpus" {
@@ -79,6 +84,10 @@ variable "export_format" {
 variable "vm_name" {
   type    = string
   default = "debian-12.11"
+}
+
+variable "timezone" {
+  type    = string
 }
 
 variable "ssh_username" {
