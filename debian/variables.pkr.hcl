@@ -1,21 +1,18 @@
 locals {
-  output_directory = "build/${formatdate("YYYY-MM-DD_hh-mm", timestamp())}"
+  output_directory = "builds/${formatdate("YYYY-MM-DD_hh-mm", timestamp())}"
   preseed_file     = "http/preseed.cfg"
 }
 
 variable "cpus" {
   type    = number
-  default = 2
 }
 
 variable "memory" {
   type    = number
-  default = 4096
 }
 
 variable "disk_size" {
   type    = number
-  default = 50000
 }
 
 variable "gfx_vram_size" {
@@ -25,22 +22,18 @@ variable "gfx_vram_size" {
 
 variable "hard_drive_interface" {
   type    = string
-  default = "sata"
 }
 
 variable "hard_drive_discard" {
   type    = bool
-  default = false
 }
 
 variable "hard_drive_nonrotational" {
   type    = bool
-  default = false
 }
 
 variable "iso_interface" {
   type    = string
-  default = "sata"
 }
 
 variable "guest_os_type" {
@@ -50,12 +43,14 @@ variable "guest_os_type" {
 
 variable "firmware_type" {
   type    = string
-  default = "efi"
 }
 
 variable "guest_additions_mode" {
   type    = string
-  default = "upload"
+}
+
+variable "iso_source" {
+  type    = string
 }
 
 variable "iso_file" {
@@ -73,11 +68,6 @@ variable "iso_checksum" {
   default = "file:https://cdimage.debian.org/cdimage/release/12.11.0/amd64/iso-cd/SHA256SUMS"
 }
 
-variable "iso_source" {
-  type    = string
-  default = "iso"
-}
-
 variable "mirror_hostname" {
   type    = string
   default = "deb.debian.org"
@@ -85,7 +75,6 @@ variable "mirror_hostname" {
 
 variable "export_format" {
   type    = string
-  default = "ova"
 }
 
 variable "vm_name" {
@@ -95,12 +84,10 @@ variable "vm_name" {
 
 variable "ssh_username" {
   type    = string
-  default = "vagrant"
 }
 
 variable "ssh_password" {
   type    = string
-  default = "vagrant"
 }
 
 variable "ssh_timeout" {

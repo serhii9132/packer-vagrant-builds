@@ -68,8 +68,8 @@ build {
 
   provisioner "shell" {
     scripts = [
-      "./scripts/inst-vbox-guest-add.sh",
-      "./scripts/zero_space.sh"
+      "../scripts/inst-vbox-guest-add.sh",
+      "../scripts/zero_space.sh"
     ]
   }
 
@@ -77,6 +77,5 @@ build {
     compression_level    = 6
     keep_input_artifact  = true
     output               = "${local.output_directory}/${var.vm_name}.box"
-    vagrantfile_template = "vagrantfile.tpl"
   }
 }
