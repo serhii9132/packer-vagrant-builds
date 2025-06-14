@@ -17,7 +17,6 @@ variable "disk_size" {
 
 variable "gfx_vram_size" {
   type    = number
-  default = 16
 }
 
 variable "hard_drive_interface" {
@@ -92,12 +91,10 @@ variable "ssh_password" {
 
 variable "ssh_timeout" {
   type    = string
-  default = "30m"
 }
 
 variable "communicator" {
   type    = string
-  default = "ssh"
 }
 
 variable "hostname" {
@@ -112,10 +109,8 @@ variable "domain" {
 
 variable "boot_wait" {
   type    = string
-  default = "5s"
 }
 
 variable "shutdown_command" {
   type    = string
-  default = "sudo shutdown -P now"
 }
