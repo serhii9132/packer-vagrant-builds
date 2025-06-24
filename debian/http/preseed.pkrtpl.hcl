@@ -82,6 +82,7 @@ d-i partman-partitioning/default_label string gpt
 d-i grub-installer/only_debian boolean true
 d-i grub-installer/with_other_os boolean true
 d-i grub-installer/bootdev string /dev/sda
+d-i grub-installer/force-efi-extra-removable boolean true
 
 # Do not scan additional CDs
 d-i apt-setup/cdrom/set-first boolean false
@@ -112,8 +113,7 @@ d-i preseed/late_command string \
   echo "${var.ssh_username} ALL=(ALL:ALL) NOPASSWD:ALL" > /target/etc/sudoers.d/${var.ssh_username}; \
   in-target chmod 0440 /etc/sudoers.d/${var.ssh_username}; \
   in-target mkdir -p /home/${var.ssh_username}/.ssh; \
-  in-target bash -c 'echo "ssh-ed25519 AAAAC3Nza..." > /home/${var.ssh_username}/.ssh/authorized_keys'; \
+  in-target bash -c 'echo "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIN1YdxBpNlzxDqfJyw/QKow1F+wvG9hXGoqiysfJOn5Y vagrant insecure public key" > /home/${var.ssh_username}/.ssh/authorized_keys'; \
   in-target chown -R ${var.ssh_username}:${var.ssh_username} /home/${var.ssh_username}/.ssh; \
   in-target chmod 700 /home/${var.ssh_username}/.ssh; \
-  in-target chmod 600 /home/${var.ssh_username}/.ssh/authorized_keys; \
-  in-target /sbin/grub-install --target=x86_64-efi --efi-directory=/boot/efi --removable --bootloader-id=debian /dev/sda
+  in-target chmod 600 /home/${var.ssh_username}/.ssh/authorized_keys
