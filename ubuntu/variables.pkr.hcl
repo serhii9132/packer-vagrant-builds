@@ -78,7 +78,7 @@ variable "export_format" {
 
 variable "vm_name" {
   type    = string
-  default = "ubuntu-24.04.2-lts"
+  default = "ubuntu-24.04-lts"
 }
 
 variable "timezone" {

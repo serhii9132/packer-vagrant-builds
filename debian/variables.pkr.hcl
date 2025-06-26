@@ -83,7 +83,7 @@ variable "export_format" {
 
 variable "vm_name" {
   type    = string
-  default = "debian-12.11"
+  default = "debian-12"
 }
 
 variable "timezone" {
