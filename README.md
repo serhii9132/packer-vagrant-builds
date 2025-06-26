@@ -4,7 +4,7 @@ Support for the vmware-iso builder is planned for future releases.
 
 ### Available OS Images
 - [Debian 12.11](https://github.com/Serhii5465/packer-templates/tree/main/debian)
-- [Ubuntu 24.04 LTS](https://github.com/Serhii5465/packer-templates/tree/main/ubuntu)
+- [Ubuntu 24.04.2 LTS](https://github.com/Serhii5465/packer-templates/tree/main/ubuntu)
 
 
 ### Usage
