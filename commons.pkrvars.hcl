@@ -18,6 +18,7 @@ timezone                 = "Europe/Kyiv"
 
 ssh_username             = "vagrant"
 ssh_password             = "vagrant"
+ssh_pub_key              = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIN1YdxBpNlzxDqfJyw/QKow1F+wvG9hXGoqiysfJOn5Y vagrant insecure public key"
 ssh_timeout              = "30m"
 
 iso_source               = "../iso"

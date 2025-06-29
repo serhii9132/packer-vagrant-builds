@@ -113,7 +113,7 @@ d-i preseed/late_command string \
   echo "${var.ssh_username} ALL=(ALL:ALL) NOPASSWD:ALL" > /target/etc/sudoers.d/${var.ssh_username}; \
   in-target chmod 0440 /etc/sudoers.d/${var.ssh_username}; \
   in-target mkdir -p /home/${var.ssh_username}/.ssh; \
-  in-target bash -c 'echo "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIN1YdxBpNlzxDqfJyw/QKow1F+wvG9hXGoqiysfJOn5Y vagrant insecure public key" > /home/${var.ssh_username}/.ssh/authorized_keys'; \
+  in-target bash -c 'echo ${var.ssh_pub_key} > /home/${var.ssh_username}/.ssh/authorized_keys'; \
   in-target chown -R ${var.ssh_username}:${var.ssh_username} /home/${var.ssh_username}/.ssh; \
   in-target chmod 700 /home/${var.ssh_username}/.ssh; \
   in-target chmod 600 /home/${var.ssh_username}/.ssh/authorized_keys

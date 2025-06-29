@@ -42,4 +42,4 @@ autoinstall:
         lock_passwd: False
         groups: sudo
         ssh_authorized_keys:
-         - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIN1YdxBpNlzxDqfJyw/QKow1F+wvG9hXGoqiysfJOn5Y vagrant insecure public key
+         - ${var.ssh_pub_key}

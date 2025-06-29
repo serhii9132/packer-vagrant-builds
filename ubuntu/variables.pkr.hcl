@@ -93,6 +93,10 @@ variable "ssh_password" {
   type    = string
 }
 
+variable "ssh_pub_key" {
+  type    = string
+}
+
 variable "ssh_timeout" {
   type    = string
 }
