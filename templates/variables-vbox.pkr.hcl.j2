@@ -1,124 +1,140 @@
 locals {
   output_directory = "builds/${formatdate("YYYY-MM-DD_hh-mm", timestamp())}"
-
-  http_dir = "/http"
-  autoinstall_files = {
-    "/meta-data" = file("${local.http_dir}/meta-data")
-    "/user-data" = templatefile("${local.http_dir}/user-data.pkrtpl.hcl", { var = var })
-  }
 }
 
 variable "cpus" {
   type    = number
+  default = {{ vm_settings.cpus }}
 }
 
 variable "memory" {
   type    = number
+  default = {{ vm_settings.memory }}
 }
 
 variable "disk_size" {
   type    = number
+  default = {{ vm_settings.disk_size }}
 }
 
 variable "gfx_vram_size" {
   type    = number
+  default = {{ vm_settings.gfx_vram_size }}
 }
 
 variable "hard_drive_interface" {
   type    = string
+  default = "{{ disk_config.hard_drive_interface }}"
 }
 
 variable "hard_drive_discard" {
   type    = bool
+  default = {{ disk_config.hard_drive_discard | lower }}
 }
 
 variable "hard_drive_nonrotational" {
   type    = bool
+  default = {{ disk_config.hard_drive_nonrotational | lower }}
 }
 
 variable "iso_interface" {
   type    = string
+  default = "{{ disk_config.iso_interface }}"
 }
 
 variable "guest_os_type" {
   type    = string
-  default = "Ubuntu_64"
+  default = "{{ guest_os_type }}"
 }
 
 variable "firmware_type" {
   type    = string
+  default = "{{ vm_settings.firmware_type }}"
 }
 
 variable "guest_additions_mode" {
   type    = string
+  default = "{{ guest_interaction.guest_additions_mode }}"
 }
 
 variable "iso_source" {
   type    = string
+  default = "{{ others.iso_source }}"
 }
 
 variable "iso_file" {
   type    = string
-  default = "ubuntu-24.04.2-live-server-amd64.iso"
+  default = "{{ iso_config.file }}"
 }
 
 variable "iso_url" {
   type    = string
-  default = "https://releases.ubuntu.com/noble"
+  default = "{{ iso_config.url }}"
 }
 
 variable "iso_checksum" {
   type    = string
-  default = "file:https://releases.ubuntu.com/noble/SHA256SUMS"
+  default = "{{ iso_config.checksum }}"
 }
 
 variable "export_format" {
   type    = string
+  default = "{{ vm_settings.export_format }}"
 }
 
 variable "vm_name" {
   type    = string
-  default = "ubuntu-24.04-lts"
+  default = "{{ vm_name }}"
 }
 
-variable "timezone" {
+{% if guest_os_type == "Debian_64" -%}
+variable "vm_hostname" {
   type    = string
+  default = "{{ vm_hostname }}"
 }
+
+variable "vm_domain" {
+  type    = string
+  default = "{{ preseed_config.domain }}"
+}
+{%- endif %}
 
 variable "ssh_username" {
   type    = string
+  default = "{{ ssh_config.ssh_username }}"
 }
 
 variable "ssh_password" {
   type    = string
+  default = "{{ ssh_config.ssh_password }}"
 }
 
 variable "ssh_pub_key" {
   type    = string
+  default = "{{ ssh_config.ssh_pub_key }}"
 }
 
 variable "ssh_timeout" {
   type    = string
+  default = "{{ ssh_config.ssh_timeout }}"
 }
 
 variable "communicator" {
   type    = string
-}
-
-variable "hostname" {
-  type    = string
-  default = "ubuntu-host"
+  default = "{{ guest_interaction.communicator }}"
 }
 
 variable "boot_wait" {
   type    = string
+  default = "{{ boot_control.boot_wait }}"
 }
 
 variable "shutdown_command" {
   type    = string
+  default = "{{ boot_control.shutdown_command }}"
 }
 
 variable "http_directory" {
   type    = string
-  default = "http"
+  default = "{{ boot_control.http_directory }}"
 }

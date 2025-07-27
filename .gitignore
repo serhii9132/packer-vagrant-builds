@@ -1,4 +1,3 @@
-builds
-iso
-packer_cache
 .vagrant
+.venv
+artifacts

@@ -1,0 +1,24 @@
+packer_builder_name: "vbox-debian"
+guest_os_type: "Debian_64"
+vm_hostname: "debian-host"
+vm_name: "debian-12"
+
+preseed_config:
+  mirror_hostname:  "deb.debian.org"
+  domain: ""
+
+iso_config:
+  url: "https://cdimage.debian.org/cdimage/release/12.11.0/amd64/iso-cd"
+  file: "debian-12.11.0-amd64-netinst.iso"
+  checksum: "file:https://cdimage.debian.org/cdimage/release/12.11.0/amd64/iso-cd/SHA256SUMS"
+
+boot_command:
+  - "<wait><wait><wait>c<wait><wait><wait>"
+  - "linux /install.amd/vmlinuz "
+  - "auto=true " 
+  - "url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed.cfg "
+  - "interface=auto "
+  - "netcfg/hostname=${var.vm_hostname} netcfg/get_hostname=${var.vm_hostname} netcfg/get_domain=${var.vm_domain} "
+  - "vga=788 noprompt quiet --<enter>" 
+  - "initrd /install.amd/initrd.gz<enter>"
+  - "boot<enter>"

@@ -15,8 +15,8 @@ d-i netcfg/choose_interface select auto
 # # Mirror from which packages will be downloaded
 d-i mirror/protocol string http
 d-i mirror/country string UA
-d-i mirror/http/hostname string ${var.mirror_hostname}
-d-i mirror/http/mirror select ${var.mirror_hostname}
+d-i mirror/http/hostname string {{ mirror_hostname }}
+d-i mirror/http/mirror select {{ mirror_hostname }}
 d-i mirror/http/directory string /debian/
 d-i mirror/http/proxy string
 
@@ -24,18 +24,18 @@ d-i mirror/http/proxy string
 d-i clock-setup/utc boolean true
 
 # Set timezone
-d-i time/zone string ${var.timezone}
+d-i time/zone string {{ guest_interaction.timezone }}
 
 # Create root uer 
 d-i passwd/root-login boolean true
-d-i passwd/root-password password ${var.ssh_password}
-d-i passwd/root-password-again password ${var.ssh_password}
+d-i passwd/root-password password {{ ssh_config.ssh_password }}
+d-i passwd/root-password-again password {{ ssh_config.ssh_password }}
 
 # Create a normal user account
-d-i passwd/user-fullname string ${var.ssh_username}
-d-i passwd/username string ${var.ssh_username}
-d-i passwd/user-password password ${var.ssh_password}
-d-i passwd/user-password-again password ${var.ssh_password}
+d-i passwd/user-fullname string {{ ssh_config.ssh_username }}
+d-i passwd/username string {{ ssh_config.ssh_username }}
+d-i passwd/user-password password {{ ssh_config.ssh_password }}
+d-i passwd/user-password-again password {{ ssh_config.ssh_password }}
 d-i passwd/user-uid string 1000
 
 # Disk configuration
@@ -110,10 +110,10 @@ d-i finish-install/reboot_in_progress note
 
 # Setup passwordless sudo for vagrant user ans insert insecure key
 d-i preseed/late_command string \
-  echo "${var.ssh_username} ALL=(ALL:ALL) NOPASSWD:ALL" > /target/etc/sudoers.d/${var.ssh_username}; \
-  in-target chmod 0440 /etc/sudoers.d/${var.ssh_username}; \
-  in-target mkdir -p /home/${var.ssh_username}/.ssh; \
-  in-target bash -c 'echo ${var.ssh_pub_key} > /home/${var.ssh_username}/.ssh/authorized_keys'; \
-  in-target chown -R ${var.ssh_username}:${var.ssh_username} /home/${var.ssh_username}/.ssh; \
-  in-target chmod 700 /home/${var.ssh_username}/.ssh; \
-  in-target chmod 600 /home/${var.ssh_username}/.ssh/authorized_keys
+  echo "{{ ssh_config.ssh_username }} ALL=(ALL:ALL) NOPASSWD:ALL" > /target/etc/sudoers.d/{{ ssh_config.ssh_username }}; \
+  in-target chmod 0440 /etc/sudoers.d/{{ ssh_config.ssh_username }}; \
+  in-target mkdir -p /home/{{ ssh_config.ssh_username }}/.ssh; \
+  in-target bash -c 'echo {{ ssh_config.ssh_pub_key }} > /home/{{ ssh_config.ssh_username }}/.ssh/authorized_keys'; \
+  in-target chown -R {{ ssh_config.ssh_username }}:{{ ssh_config.ssh_username }} /home/{{ ssh_config.ssh_username }}/.ssh; \
+  in-target chmod 700 /home/{{ ssh_config.ssh_username }}/.ssh; \
+  in-target chmod 600 /home/{{ ssh_config.ssh_username }}/.ssh/authorized_keys
