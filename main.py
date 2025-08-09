@@ -56,6 +56,9 @@ def generate_packer_config(os_name, configs_dir, templates_dir, artifacts_base_d
     output_base_pkr_hcl = os.path.join(os_artifacts_dir, name_output_base_pkr_hcl)
     output_variables_pkr_hcl = os.path.join(os_artifacts_dir, name_output_variables_pkr_hcl)
 
+    os_http_dir = os.path.join(os_artifacts_dir, 'http')
+    os.makedirs(os_http_dir, exist_ok=True)
+
     try:
         template_base = base_env.get_template('base-vbox.pkr.hcl.j2')
         rendered_base = template_base.render(merged_config)
@@ -73,9 +76,6 @@ def generate_packer_config(os_name, configs_dir, templates_dir, artifacts_base_d
         print(f"  - Generated variables config: {name_output_variables_pkr_hcl}")
     except Exception as e:
         print(f"  Error rendering variables-vbox.pkr.hcl.j2: {e}")
-
-    os_http_dir = os.path.join(os_artifacts_dir, 'http')
-    os.makedirs(os_http_dir, exist_ok=True)
 
     full_provision_templates_dir = os.path.join(templates_dir, os_info["provision_templates_dir"])
     provision_env = Environment(loader=FileSystemLoader(full_provision_templates_dir))
