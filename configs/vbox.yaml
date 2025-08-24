@@ -1,0 +1,13 @@
+vm_settings:
+  gfx_vram_size: 16
+
+vboxmanage_commands:
+  - [ "modifyvm", "{{.Name}}", "--audio", "none" ]
+  - [ "modifyvm", "{{.Name}}", "--vrde", "off" ]
+
+disk_config:
+  is_discard: false
+  is_nonrotational: false
+
+guest_interaction:
+  guest_additions_mode: "upload"
