@@ -41,11 +41,15 @@ def generate_packer_config(os_name, configs_dir, templates_dir, artifacts_base_d
 
     file_common_settings = os.path.join(configs_dir, 'common.yaml')
     file_os_settings = os.path.join(configs_dir, os_info["os_config_file"])
+    file_hypervisor_settings = os.path.join(configs_dir, 'vbox.yaml')
 
     common_config = load_yaml(file_common_settings)
     os_specific_config = load_yaml(file_os_settings)
-    merged_config = merge_configs(common_config, os_specific_config)
+    hypervisor_specific_config = load_yaml(file_hypervisor_settings)
 
+    merged_config = merge_configs(common_config, os_specific_config)
+    merged_config = merge_configs(merged_config, hypervisor_specific_config)
+    
     base_env = Environment(loader=FileSystemLoader(templates_dir))
     
     os_artifacts_dir = os.path.join(artifacts_base_dir, os_name)
@@ -98,7 +102,7 @@ def generate_packer_config(os_name, configs_dir, templates_dir, artifacts_base_d
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Generate Packer configurations for various OSes.")
+    parser = argparse.ArgumentParser(description="Generate Packer configurations for various OS.")
     parser.add_argument(
         '--all', action='store_true',
         help="Generate configurations for all supported OSes (Ubuntu and Debian)."
