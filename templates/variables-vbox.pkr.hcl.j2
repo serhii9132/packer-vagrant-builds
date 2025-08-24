@@ -24,22 +24,17 @@ variable "gfx_vram_size" {
 
 variable "hard_drive_interface" {
   type    = string
-  default = "{{ disk_config.hard_drive_interface }}"
+  default = "{{ disk_config.interface }}"
 }
 
 variable "hard_drive_discard" {
   type    = bool
-  default = {{ disk_config.hard_drive_discard | lower }}
+  default = {{ disk_config.is_discard | lower }}
 }
 
 variable "hard_drive_nonrotational" {
   type    = bool
-  default = {{ disk_config.hard_drive_nonrotational | lower }}
-}
-
-variable "iso_interface" {
-  type    = string
-  default = "{{ disk_config.iso_interface }}"
+  default = {{ disk_config.is_nonrotational | lower }}
 }
 
 variable "guest_os_type" {
@@ -57,9 +52,14 @@ variable "guest_additions_mode" {
   default = "{{ guest_interaction.guest_additions_mode }}"
 }
 
+variable "iso_interface" {
+  type    = string
+  default = "{{ iso_config.interface }}"
+}
+
 variable "iso_source" {
   type    = string
-  default = "{{ others.iso_source }}"
+  default = "{{ iso_config.source }}"
 }
 
 variable "iso_file" {
@@ -101,22 +101,22 @@ variable "vm_domain" {
 
 variable "ssh_username" {
   type    = string
-  default = "{{ ssh_config.ssh_username }}"
+  default = "{{ ssh_config.username }}"
 }
 
 variable "ssh_password" {
   type    = string
-  default = "{{ ssh_config.ssh_password }}"
+  default = "{{ ssh_config.password }}"
 }
 
 variable "ssh_pub_key" {
   type    = string
-  default = "{{ ssh_config.ssh_pub_key }}"
+  default = "{{ ssh_config.pub_key }}"
 }
 
 variable "ssh_timeout" {
   type    = string
-  default = "{{ ssh_config.ssh_timeout }}"
+  default = "{{ ssh_config.timeout }}"
 }
 
 variable "communicator" {
