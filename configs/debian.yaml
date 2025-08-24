@@ -10,7 +10,7 @@ preseed_config:
 iso_config:
   url: "https://cdimage.debian.org/cdimage/release/12.11.0/amd64/iso-cd"
   file: "debian-12.11.0-amd64-netinst.iso"
-  checksum: "file:https://cdimage.debian.org/cdimage/release/12.11.0/amd64/iso-cd/SHA256SUMS"
+  checksum: "file:https://cdimage.debian.org/cdimage/archive/12.11.0/amd64/iso-cd/SHA256SUMS"
 
 boot_command:
   - "<wait><wait><wait>c<wait><wait><wait>"

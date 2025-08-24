@@ -2,35 +2,28 @@ vm_settings:
   cpus: 4
   memory: 4096
   disk_size: 100000
-  gfx_vram_size: 16
   firmware_type: "efi"
   export_format: "ova"
 
-vboxmanage_commands:
-  - [ "modifyvm", "{{.Name}}", "--audio", "none" ]
-  - [ "modifyvm", "{{.Name}}", "--vrde", "off" ]
-
 disk_config:
-  hard_drive_interface: "sata"
-  hard_drive_discard: false
-  hard_drive_nonrotational: false
-  iso_interface: "sata"
+  interface: "sata"
+
+iso_config:
+  interface: "sata"
+  source: "../iso" 
 
 guest_interaction:
-  guest_additions_mode: "upload"
   communicator: "ssh"
   timezone: "Europe/Kyiv"
 
 ssh_config:
-  ssh_username: "vagrant"
-  ssh_password: "vagrant"
-  ssh_pub_key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIN1YdxBpNlzxDqfJyw/QKow1F+wvG9hXGoqiysfJOn5Y vagrant insecure public key"
-  ssh_timeout: "30m"
+  username: "vagrant"
+  password: "vagrant"
+  hash_password: "$6$dYP4Mnb3ucA/f3j0$nY5YHd3FF/vCve8mYN4c0N1T0kTe.zN5bHwpaoTbSAY.rwtbHVSFtrFotgaW8A1DJS/AKc7PUSmlKHu9.rRpH0"
+  pub_key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIN1YdxBpNlzxDqfJyw/QKow1F+wvG9hXGoqiysfJOn5Y vagrant insecure public key"
+  timeout: "30m"
 
 boot_control:
   boot_wait: "5s"
   shutdown_command: "sudo shutdown -P now"
   http_directory: "http"
-
-others:
-  iso_source: "../iso" 
