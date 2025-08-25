@@ -11,18 +11,48 @@ packer {
   }
 }
 
+locals {
+  output_directory = "builds/${formatdate("YYYY-MM-DD_hh-mm", timestamp())}"
+}
+
 source "virtualbox-iso" "{{ packer_builder_name }}" {
-  guest_os_type = var.guest_os_type
-  vm_name       = var.vm_name
+  guest_os_type            = "{{ guest_os_type }}"
+  vm_name                  = "{{ vm_name }}"
+  firmware                 = "{{ vm_settings.firmware_type }}"
+  format                   = "{{ vm_settings.export_format }}"
+  
+  cpus                     = {{ vm_settings.cpus }}
+  memory                   = {{ vm_settings.memory }}
+  disk_size                = {{ vm_settings.disk_size }}
+  gfx_vram_size            = {{ vm_settings.gfx_vram_size }}
+  
+  guest_additions_mode     = "{{ guest_interaction.guest_additions_mode }}"
+  communicator             = "{{ guest_interaction.communicator }}"
 
-  cpus          = var.cpus
-  memory        = var.memory
-  disk_size     = var.disk_size
-  gfx_vram_size = var.gfx_vram_size
-  firmware      = var.firmware_type
-  format        = var.export_format
+  hard_drive_interface     = "{{ disk_config.interface }}"
+  hard_drive_discard       = {{ disk_config.is_discard | lower }}
+  hard_drive_nonrotational = {{ disk_config.is_nonrotational | lower }}
 
-  guest_additions_mode = var.guest_additions_mode
+  ssh_username             = "{{ ssh_config.username }}"
+  ssh_password             = "{{ ssh_config.password }}"
+  ssh_timeout              = "{{ ssh_config.timeout }}"
+
+  iso_interface            = "{{ iso_config.interface }}"
+  iso_url                  = "{{ iso_config.url }}/{{ iso_config.file }}"
+  iso_checksum             = "{{ iso_config.checksum }}"
+  iso_target_path          = "{{ iso_config.source }}/{{ iso_config.file }}"
+
+  output_directory         = local.output_directory
+
+  http_directory           = "{{ boot_control.http_directory }}"
+
+  boot_wait                = "{{ boot_control.boot_wait }}"
+  boot_command = [
+    {%- for line in boot_command %}
+    "{{ line | replace('"', '\\"') }}"{% if not loop.last %},{% endif -%}
+    {% endfor -%}
+  ]
+  shutdown_command        = "{{ boot_control.shutdown_command }}"
 
   {% if vboxmanage_commands -%}
   vboxmanage = [
@@ -35,32 +65,6 @@ source "virtualbox-iso" "{{ packer_builder_name }}" {
     {% endfor -%}
   ]
   {%- endif %}
-
-  hard_drive_interface     = var.hard_drive_interface
-  hard_drive_discard       = var.hard_drive_discard
-  hard_drive_nonrotational = var.hard_drive_nonrotational
-  iso_interface            = var.iso_interface
-
-  communicator = var.communicator
-  ssh_username = var.ssh_username
-  ssh_password = var.ssh_password
-  ssh_timeout  = var.ssh_timeout
-
-  iso_url         = "${var.iso_url}/${var.iso_file}"
-  iso_checksum    = var.iso_checksum
-  iso_target_path = "${var.iso_source}/${var.iso_file}"
-
-  output_directory = local.output_directory
-
-  http_directory = var.http_directory
-
-  boot_wait = var.boot_wait
-  boot_command = [
-    {%- for line in boot_command %}
-    "{{ line | replace('"', '\\"') }}"{% if not loop.last %},{% endif -%}
-    {% endfor -%}
-  ]
-  shutdown_command = var.shutdown_command
 }
 
 build {
@@ -68,7 +72,7 @@ build {
 
   provisioner "shell" {
     scripts = [
-      "../../scripts/inst-vbox-guest-add.sh",
+      "../../scripts/install-vbox-guest-add.sh",
       "../../scripts/zero_space.sh"
     ]
   }
@@ -76,6 +80,6 @@ build {
   post-processor "vagrant" {
     compression_level    = 6
     keep_input_artifact  = true
-    output               = "${local.output_directory}/${var.vm_name}.box"
+    output               = "${local.output_directory}/{{ vm_name }}.box"
   }
 }

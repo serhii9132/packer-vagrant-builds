@@ -72,15 +72,6 @@ def generate_packer_config(os_name, configs_dir, templates_dir, artifacts_base_d
     except Exception as e:
         print(f"  Error rendering base-vbox.pkr.hcl.j2: {e}")
 
-    try:
-        template_variables = base_env.get_template('variables-vbox.pkr.hcl.j2')
-        rendered_variables = template_variables.render(merged_config)
-        with open(output_variables_pkr_hcl, 'w', encoding='utf-8') as f:
-            f.write(rendered_variables)
-        print(f"  - Generated variables config: {name_output_variables_pkr_hcl}")
-    except Exception as e:
-        print(f"  Error rendering variables-vbox.pkr.hcl.j2: {e}")
-
     full_provision_templates_dir = os.path.join(templates_dir, os_info["provision_templates_dir"])
     provision_env = Environment(loader=FileSystemLoader(full_provision_templates_dir))
 
