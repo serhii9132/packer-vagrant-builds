@@ -1,11 +1,9 @@
-packer_builder_name: "vbox-debian"
+packer_builder_name: "debian"
 guest_os_type: "Debian_64"
-vm_hostname: "debian-host"
 vm_name: "debian-12"
 
 preseed_config:
-  mirror_hostname:  "deb.debian.org"
-  domain: ""
+  mirror_hostname: "deb.debian.org"
 
 iso_config:
   url: "https://cdimage.debian.org/cdimage/release/12.11.0/amd64/iso-cd"
@@ -18,7 +16,7 @@ boot_command:
   - "auto=true " 
   - "url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed.cfg "
   - "interface=auto "
-  - "netcfg/hostname=${var.vm_hostname} netcfg/get_hostname=${var.vm_hostname} netcfg/get_domain=${var.vm_domain} "
+  - "netcfg/hostname=debian netcfg/get_hostname=debian netcfg/get_domain='' "
   - "vga=788 noprompt quiet --<enter>" 
   - "initrd /install.amd/initrd.gz<enter>"
   - "boot<enter>"

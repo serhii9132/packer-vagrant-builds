@@ -1,6 +1,5 @@
-packer_builder_name: "vbox-ubuntu"
+packer_builder_name: "ubuntu"
 guest_os_type: "Ubuntu_64"
-vm_hostname: "ubuntu-host"
 vm_name: "ubuntu-24.04-lts"
 
 iso_config:

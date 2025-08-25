@@ -6,6 +6,7 @@ vboxmanage_commands:
   - [ "modifyvm", "{{.Name}}", "--vrde", "off" ]
 
 disk_config:
+  interface: "sata"
   is_discard: false
   is_nonrotational: false
 

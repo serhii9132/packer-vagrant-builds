@@ -5,9 +5,6 @@ vm_settings:
   firmware_type: "efi"
   export_format: "ova"
 
-disk_config:
-  interface: "sata"
-
 iso_config:
   interface: "sata"
   source: "../iso" 
