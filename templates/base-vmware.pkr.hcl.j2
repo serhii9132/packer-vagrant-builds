@@ -1,0 +1,85 @@
+packer {
+  required_plugins {
+    virtualbox = {
+      source  = "github.com/hashicorp/vmware"
+      version = "~> 1"
+    }
+    vagrant = {
+      source  = "github.com/hashicorp/vagrant"
+      version = "~> 1"
+    }
+  }
+}
+
+locals {
+  output_directory = "builds/vmware/${formatdate("YYYY-MM-DD_hh-mm", timestamp())}"
+}
+
+source "vmware-iso" "{{ packer_builder_name }}" {
+  version                         = {{ vm_settings.version }}
+  firmware                        = "{{ vm_settings.firmware_type }}"
+  headless                        = {{ vm_settings.is_headless | lower }}
+  vmx_remove_ethernet_interfaces  = {{ vm_settings.is_vmx_remove_ethernet_interfaces | lower }}
+  skip_export                     = {{ vm_settings.is_skip_export | lower }}
+  guest_os_type                   = "{{ vmware_guest_os_type }}"
+  vm_name                         = "{{ vm_name }}"
+  
+  cpus                            = {{ vm_settings.cpus }}
+  cores                           = {{ vm_settings.cpus }}
+  memory                          = {{ vm_settings.memory }}
+  disk_size                       = {{ vm_settings.disk_size }}
+  disk_type_id                    = {{ disk_config.type_id }}
+  disk_adapter_type               = "{{ disk_config.adapter_type }}"
+
+  cdrom_adapter_type              = "{{ iso_config.interface }}"
+  iso_url                         = "{{ iso_config.url }}/{{ iso_config.file }}"
+  iso_checksum                    = "{{ iso_config.checksum }}"
+  iso_target_path                 = abspath("{{ iso_config.source }}/{{ iso_config.file }}") 
+  output_directory                = abspath("${local.output_directory}")
+
+  communicator                    = "{{ guest_interaction.communicator }}"
+  http_directory                  = "{{ boot_control.http_directory }}"
+
+  vnc_bind_address                = "{{ vnc_config.address }}"
+  vnc_port_min                    = "{{ vnc_config.port }}"
+  vnc_port_max                    = "{{ vnc_config.port }}"
+
+  ssh_username                    = "{{ ssh_config.username }}"
+  ssh_password                    = "{{ ssh_config.password }}"
+  ssh_timeout                     = "{{ ssh_config.timeout }}"
+
+  boot_wait                       = "{{ boot_control.boot_wait }}"
+  boot_command = [
+    {%- for line in boot_command %}
+    "{{ line | replace('"', '\\"') }}"{% if not loop.last %},{% endif -%}
+    {% endfor -%}
+  ]
+  shutdown_command                = "{{ boot_control.shutdown_command }}"
+
+  vmx_data = {
+    "ethernet0.virtualdev" = "vmxnet3"
+  }
+}
+
+build {
+  sources = ["sources.vmware-iso.{{ packer_builder_name }}"]
+
+  provisioner "shell" {
+    inline = [
+      "sudo apt update",
+      "sudo apt install -y open-vm-tools"
+    ]
+  }
+
+  provisioner "shell" {
+    scripts = [
+      "../../../scripts/zero_space.sh"
+    ]
+  }
+
+  post-processor "vagrant" {
+    compression_level    = 6
+    keep_input_artifact  = true
+    output               = "${local.output_directory}/{{ vm_name }}.box"
+  }
+}

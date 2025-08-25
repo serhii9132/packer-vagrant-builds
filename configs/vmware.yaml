@@ -1,0 +1,13 @@
+vm_settings:
+  version: 21
+  is_headless: true
+  is_vmx_remove_ethernet_interfaces: true
+  is_skip_export: true
+
+disk_config:
+  type_id: 0
+  adapter_type: "scsi"
+
+vnc_config:
+  address: "127.0.0.1"
+  port: 5963

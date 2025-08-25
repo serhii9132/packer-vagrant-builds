@@ -23,8 +23,8 @@ def merge_configs(dict1, dict2):
             merged[key] = value
     return merged
 
-def generate_packer_config(os_name, configs_dir, templates_dir, artifacts_base_dir):
-    print(f"\n--- Generating configuration for {os_name.capitalize()} ---")
+def generate_packer_config(os_name, hypervisor, configs_dir, templates_dir, artifacts_base_dir):
+    print(f"\n--- Generating configuration for {os_name.capitalize()} on {hypervisor.capitalize()} ---")
 
     os_configs = {
         "ubuntu": {
@@ -41,7 +41,7 @@ def generate_packer_config(os_name, configs_dir, templates_dir, artifacts_base_d
 
     file_common_settings = os.path.join(configs_dir, 'common.yaml')
     file_os_settings = os.path.join(configs_dir, os_info["os_config_file"])
-    file_hypervisor_settings = os.path.join(configs_dir, 'vbox.yaml')
+    file_hypervisor_settings = os.path.join(configs_dir, f'{hypervisor}.yaml')
 
     common_config = load_yaml(file_common_settings)
     os_specific_config = load_yaml(file_os_settings)
@@ -52,25 +52,25 @@ def generate_packer_config(os_name, configs_dir, templates_dir, artifacts_base_d
     
     base_env = Environment(loader=FileSystemLoader(templates_dir))
     
-    os_artifacts_dir = os.path.join(artifacts_base_dir, os_name)
+    os_artifacts_dir = os.path.join(artifacts_base_dir, hypervisor, os_name)
+    os.makedirs(os_artifacts_dir, exist_ok=True)
 
     name_output_base_pkr_hcl = f'{os_name}.pkr.hcl'
-    name_output_variables_pkr_hcl = 'variables.pkr.hcl'
-
     output_base_pkr_hcl = os.path.join(os_artifacts_dir, name_output_base_pkr_hcl)
-    output_variables_pkr_hcl = os.path.join(os_artifacts_dir, name_output_variables_pkr_hcl)
 
     os_http_dir = os.path.join(os_artifacts_dir, 'http')
     os.makedirs(os_http_dir, exist_ok=True)
 
     try:
-        template_base = base_env.get_template('base-vbox.pkr.hcl.j2')
+        template_base_filename = f'base-{hypervisor}.pkr.hcl.j2'
+        template_base = base_env.get_template(template_base_filename)
         rendered_base = template_base.render(merged_config)
+
         with open(output_base_pkr_hcl, 'w') as f:
             f.write(rendered_base)
         print(f"  - Generated main Packer config: {name_output_base_pkr_hcl}")
     except Exception as e:
-        print(f"  Error rendering base-vbox.pkr.hcl.j2: {e}")
+        print(f"  Error rendering {template_base_filename}: {e}")
 
     full_provision_templates_dir = os.path.join(templates_dir, os_info["provision_templates_dir"])
     provision_env = Environment(loader=FileSystemLoader(full_provision_templates_dir))
@@ -87,37 +87,37 @@ def generate_packer_config(os_name, configs_dir, templates_dir, artifacts_base_d
                     f.write(rendered_content)  
 
                 print(f"  - Generated provisioning file: {output_filename}")
-
             except Exception as e:
                 print(f"  Error rendering template '{filename}': {e}")
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Generate Packer configurations for various OS.")
-    parser.add_argument(
-        '--all', action='store_true',
-        help="Generate configurations for all supported OSes (Ubuntu and Debian)."
-    )
-    parser.add_argument(
-        '--ubuntu', action='store_true',
-        help="Generate configuration only for Ubuntu."
-    )
-    parser.add_argument(
-        '--debian', action='store_true',
-        help="Generate configuration only for Debian."
-    )
+    parser = argparse.ArgumentParser(description="Generate Packer configurations for various OS and hypervisors.")
+    
+    hypervisor_group = parser.add_mutually_exclusive_group(required=True)
+    hypervisor_group.add_argument('--virtualbox', action='store_true', help="Generate configuration for VirtualBox.")
+    hypervisor_group.add_argument('--vmware', action='store_true', help="Generate configuration for VMware Workstation.")
+    
+    os_group = parser.add_mutually_exclusive_group(required=True)
+    os_group.add_argument('--all', action='store_true', help="Generate configurations for all supported OSes (Ubuntu and Debian).")
+    os_group.add_argument('--ubuntu', action='store_true', help="Generate configuration only for Ubuntu.")
+    os_group.add_argument('--debian', action='store_true', help="Generate configuration only for Debian.")
 
     args = parser.parse_args()
-    oses_to_generate = []
+    
+    hypervisor = None
+    if args.virtualbox:
+        hypervisor = "virtualbox"
+    elif args.vmware:
+        hypervisor = "vmware"
 
+    os_to_generate = []
     if args.all:
-        oses_to_generate = ["ubuntu", "debian"]
+        os_to_generate = ["ubuntu", "debian"]
     elif args.ubuntu:
-        oses_to_generate = ["ubuntu"]
+        os_to_generate = ["ubuntu"]
     elif args.debian:
-        oses_to_generate = ["debian"]
-    else:
-        parser.parse_args(['-h'])
+        os_to_generate = ["debian"]
 
     base_dir = os.path.dirname(os.path.abspath(__file__))
     configs_dir = os.path.join(base_dir, 'configs')
@@ -126,8 +126,8 @@ def main():
 
     os.makedirs(artifacts_base_dir, exist_ok=True)
 
-    for os_name in oses_to_generate:
-        generate_packer_config(os_name, configs_dir, templates_dir, artifacts_base_dir)
+    for os_name in os_to_generate:
+        generate_packer_config(os_name, hypervisor, configs_dir, templates_dir, artifacts_base_dir)
 
 if __name__ == "__main__":
     main()
