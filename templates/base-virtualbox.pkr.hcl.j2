@@ -12,11 +12,11 @@ packer {
 }
 
 locals {
-  output_directory = "builds/${formatdate("YYYY-MM-DD_hh-mm", timestamp())}"
+  output_directory = "builds/virtualbox/${formatdate("YYYY-MM-DD_hh-mm", timestamp())}"
 }
 
 source "virtualbox-iso" "{{ packer_builder_name }}" {
-  guest_os_type            = "{{ guest_os_type }}"
+  guest_os_type            = "{{ vbox_guest_os_type }}"
   vm_name                  = "{{ vm_name }}"
   firmware                 = "{{ vm_settings.firmware_type }}"
   format                   = "{{ vm_settings.export_format }}"
@@ -72,8 +72,8 @@ build {
 
   provisioner "shell" {
     scripts = [
-      "../../scripts/install-vbox-guest-add.sh",
-      "../../scripts/zero_space.sh"
+      "../../../scripts/install-vbox-guest-add.sh",
+      "../../../scripts/zero_space.sh"
     ]
   }
 
