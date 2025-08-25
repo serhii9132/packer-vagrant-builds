@@ -17,12 +17,6 @@ autoinstall:
     allow-pw: true
 
   packages:
-    - bzip2
-    - gcc
-    - make
-    - dkms
-    - perl
-    - build-essential
     - python3
 
   timezone: {{ guest_interaction.timezone }}
@@ -35,7 +29,7 @@ autoinstall:
     - echo "{{ ssh_config.username }} ALL=(ALL:ALL) NOPASSWD:ALL" > /target/etc/sudoers.d/{{ ssh_config.username }}
 
   user-data:
-    hostname: {{ vm_hostname }}
+    hostname: ubuntu
     users:
       - name: {{ ssh_config.username }}
         passwd: "{{ ssh_config.hash_password }}"

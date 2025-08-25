@@ -15,8 +15,8 @@ d-i netcfg/choose_interface select auto
 # # Mirror from which packages will be downloaded
 d-i mirror/protocol string http
 d-i mirror/country string UA
-d-i mirror/http/hostname string {{ mirror_hostname }}
-d-i mirror/http/mirror select {{ mirror_hostname }}
+d-i mirror/http/hostname string {{ preseed_config.mirror_hostname }}
+d-i mirror/http/mirror select {{ preseed_config.mirror_hostname }}
 d-i mirror/http/directory string /debian/
 d-i mirror/http/proxy string
 
@@ -94,7 +94,7 @@ d-i apt-setup/use_mirror boolean true
 tasksel tasksel/first multiselect ssh-server
 
 # Extra packages to be installed
-d-i pkgsel/include string sudo build-essential perl dkms make gcc bzip2 python3
+d-i pkgsel/include string sudo python3
 
 # Disable polularity contest
 popularity-contest popularity-contest/participate boolean false
