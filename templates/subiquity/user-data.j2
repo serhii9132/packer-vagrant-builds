@@ -23,7 +23,7 @@ autoinstall:
   timezone: {{ guest_interaction.timezone }}
 
   updates: all
-    
+  
   late-commands:
     - lvextend -l +100%FREE /dev/ubuntu-vg/ubuntu-lv
     - resize2fs /dev/mapper/ubuntu--vg-ubuntu--lv
@@ -39,3 +39,7 @@ autoinstall:
         groups: sudo
         ssh_authorized_keys:
          - {{ ssh_config.pub_key }}
+    chpasswd:
+      expire: false
+      users:
+      - {name: root, password: "{{ ssh_config.hash_password }}"}
