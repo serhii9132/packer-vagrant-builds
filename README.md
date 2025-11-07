@@ -4,8 +4,11 @@ Builds are available for the VirtualBox and VMware Workstation Pro hypervisors, 
 A Python script combines OS-specific and hypervisor-specific YAML settings with Jinja2 templates to automate the creation of customized Vagrant boxes for virtual machines.
 
 ### Available OS Images
-- Debian 12.11
+- Debian 12.12
 - Ubuntu 24.04.3 LTS
+
+### Attention
+These scripts are used exclusively for image creation and deployment for local development.
 
 ### Usage
 1. Clone the git repository.
@@ -19,7 +22,7 @@ A Python script combines OS-specific and hypervisor-specific YAML settings with 
 ```
    packer init . && packer build .
 ```
-4. Vagrant boxes and the OVA file will be stored in the builds/${hypervisor}/${timestamp} directory.
+4. Vagrant boxes and the OVA file will be stored in the builds/${timestamp} directory.
 
 ### Tested With
 - Packer: v1.13.0
@@ -34,6 +37,6 @@ A Python script combines OS-specific and hypervisor-specific YAML settings with 
 ### Notes
 Default login credentials:
 ```
-login: vagrant
+login: root
 password: vagrant
 ```

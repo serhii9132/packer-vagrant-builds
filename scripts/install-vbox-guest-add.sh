@@ -1,14 +1,14 @@
 #!/bin/bash
 
-ISO=/home/vagrant/VBoxGuestAdditions.iso
+ISO=/root/VBoxGuestAdditions.iso
 MNT_POINT=/mnt
 
-sudo apt install -y build-essential perl dkms make gcc bzip2
+apt install -y build-essential perl dkms make gcc bzip2
 
-sudo mount -o loop $ISO $MNT_POINT
-sudo bash ${MNT_POINT}/VBoxLinuxAdditions.run
+mount -o loop $ISO $MNT_POINT
+bash ${MNT_POINT}/VBoxLinuxAdditions.run
 
-sudo usermod -aG vboxsf vagrant
-sudo umount $MNT_POINT
+usermod -aG vboxsf root
+umount $MNT_POINT
 
 rm $ISO

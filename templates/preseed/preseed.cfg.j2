@@ -31,12 +31,7 @@ d-i passwd/root-login boolean true
 d-i passwd/root-password password {{ ssh_config.password }}
 d-i passwd/root-password-again password {{ ssh_config.password }}
 
-# Create a normal user account
-d-i passwd/user-fullname string {{ ssh_config.username }}
-d-i passwd/username string {{ ssh_config.username }}
-d-i passwd/user-password password {{ ssh_config.password }}
-d-i passwd/user-password-again password {{ ssh_config.password }}
-d-i passwd/user-uid string 1000
+d-i passwd/make-user boolean false
 
 # Disk configuration
 d-i partman-auto/method string lvm
@@ -108,12 +103,9 @@ d-i cdrom-detect/eject boolean false
 # Reboot once the install is done
 d-i finish-install/reboot_in_progress note
 
-# Setup passwordless sudo for vagrant user ans insert insecure key
 d-i preseed/late_command string \
-  echo "{{ ssh_config.username }} ALL=(ALL:ALL) NOPASSWD:ALL" > /target/etc/sudoers.d/{{ ssh_config.username }}; \
-  in-target chmod 0440 /etc/sudoers.d/{{ ssh_config.username }}; \
-  in-target mkdir -p /home/{{ ssh_config.username }}/.ssh; \
-  in-target bash -c 'echo {{ ssh_config.pub_key }} > /home/{{ ssh_config.username }}/.ssh/authorized_keys'; \
-  in-target chown -R {{ ssh_config.username }}:{{ ssh_config.username }} /home/{{ ssh_config.username }}/.ssh; \
-  in-target chmod 700 /home/{{ ssh_config.username }}/.ssh; \
-  in-target chmod 600 /home/{{ ssh_config.username }}/.ssh/authorized_keys
+ echo "PermitRootLogin yes" >> /target/etc/ssh/sshd_config.d/50-cloud-init.conf; \
+ in-target mkdir -p /{{ ssh_config.username }}/.ssh; \
+ in-target bash -c 'echo "{{ ssh_config.pub_key }}" > /{{ ssh_config.username }}/.ssh/authorized_keys'; \
+ in-target chmod 700 /{{ ssh_config.username }}/.ssh; \
+ in-target chmod 600 /{{ ssh_config.username }}/.ssh/authorized_keys

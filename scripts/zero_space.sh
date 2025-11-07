@@ -1,5 +1,5 @@
 #!/bin/bash
 
-sudo apt clean
-sudo dd if=/dev/zero of=/zerofile bs=1M
-sudo rm /zerofile
+apt clean
+dd if=/dev/zero of=/zerofile bs=1M
+rm /zerofile
