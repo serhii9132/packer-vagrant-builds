@@ -1,7 +1,7 @@
 vm_settings:
   cpus: 4
   memory: 4096
-  disk_size: 100000
+  disk_size: 150000
   firmware_type: "efi"
   export_format: "ova"
 
