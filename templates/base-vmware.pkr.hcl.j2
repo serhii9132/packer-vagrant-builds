@@ -12,7 +12,7 @@ packer {
 }
 
 locals {
-  output_directory = "builds/vmware/${formatdate("YYYY-MM-DD_hh-mm", timestamp())}"
+  output_directory = "builds/${formatdate("YYYY-MM-DD_hh-mm", timestamp())}"
 }
 
 source "vmware-iso" "{{ packer_builder_name }}" {

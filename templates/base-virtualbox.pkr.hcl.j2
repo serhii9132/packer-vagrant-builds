@@ -12,7 +12,7 @@ packer {
 }
 
 locals {
-  output_directory = "builds/virtualbox/${formatdate("YYYY-MM-DD_hh-mm", timestamp())}"
+  output_directory = "builds/${formatdate("YYYY-MM-DD_hh-mm", timestamp())}"
 }
 
 source "virtualbox-iso" "{{ packer_builder_name }}" {
@@ -43,7 +43,7 @@ source "virtualbox-iso" "{{ packer_builder_name }}" {
   iso_target_path          = "{{ iso_config.source }}/{{ iso_config.file }}"
 
   output_directory         = local.output_directory
-
+  
   http_directory           = "{{ boot_control.http_directory }}"
 
   boot_wait                = "{{ boot_control.boot_wait }}"
