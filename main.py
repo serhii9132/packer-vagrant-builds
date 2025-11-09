@@ -1,9 +1,10 @@
 import yaml
 import os
 import argparse
+from typing import Any, Dict
 from jinja2 import Environment, FileSystemLoader
 
-def load_yaml(file_path):
+def load_yaml(file_path: str) -> Dict[str, Any]:
     try:
         with open(file_path, 'r') as f:
             return yaml.safe_load(f)
@@ -14,7 +15,7 @@ def load_yaml(file_path):
         print(f"Error parsing YAML file {file_path}: {e}")
         exit(1)
 
-def merge_configs(dict1, dict2):
+def merge_configs(dict1: Dict[str, any], dict2: Dict[str, any]) -> Dict[str, any]:
     merged = dict1.copy()
     for key, value in dict2.items():
         if key in merged and isinstance(merged[key], dict) and isinstance(value, dict):
@@ -23,7 +24,7 @@ def merge_configs(dict1, dict2):
             merged[key] = value
     return merged
 
-def generate_packer_config(os_name, hypervisor, configs_dir, templates_dir, artifacts_base_dir):
+def generate_packer_config(os_name: str, hypervisor: str, configs_dir: str, templates_dir: str, artifacts_base_dir: str) -> None:
     print(f"\n--- Generating configuration for {os_name.capitalize()} on {hypervisor.capitalize()} ---")
 
     os_configs = {
@@ -91,7 +92,7 @@ def generate_packer_config(os_name, hypervisor, configs_dir, templates_dir, arti
                 print(f"  Error rendering template '{filename}': {e}")
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(description="Generate Packer configurations for various OS and hypervisors.")
     
     hypervisor_group = parser.add_mutually_exclusive_group(required=True)
