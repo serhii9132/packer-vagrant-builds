@@ -10,5 +10,6 @@ disk_config:
   is_discard: false
   is_nonrotational: false
 
-guest_interaction:
-  guest_additions_mode: "upload"
+guest_additions:
+  mode: "upload"
+  path: "/tmp/VBoxGuestAdditions.iso"
