@@ -26,7 +26,9 @@ source "virtualbox-iso" "{{ packer_builder_name }}" {
   disk_size                = {{ vm_settings.disk_size }}
   gfx_vram_size            = {{ vm_settings.gfx_vram_size }}
   
-  guest_additions_mode     = "{{ guest_interaction.guest_additions_mode }}"
+  guest_additions_mode     = "{{ guest_additions.mode }}"
+  guest_additions_path     = "{{ guest_additions.path }}"
+
   communicator             = "{{ guest_interaction.communicator }}"
 
   hard_drive_interface     = "{{ disk_config.interface }}"
@@ -34,8 +36,8 @@ source "virtualbox-iso" "{{ packer_builder_name }}" {
   hard_drive_nonrotational = {{ disk_config.is_nonrotational | lower }}
 
   ssh_username             = "{{ ssh_config.username }}"
-  ssh_password             = "{{ ssh_config.password }}"
   ssh_timeout              = "{{ ssh_config.timeout }}"
+  ssh_private_key_file     = "{{ ssh_config.private_key_file }}"
 
   iso_interface            = "{{ iso_config.interface }}"
   iso_url                  = "{{ iso_config.url }}/{{ iso_config.file }}"
@@ -75,6 +77,19 @@ build {
       "../../../scripts/install-vbox-guest-add.sh",
       "../../../scripts/zero_space.sh"
     ]
+
+  {%- if ssh_config.is_rootless %}
+    environment_vars = [
+      "ISO_PATH={{ guest_additions.path }}",
+      "SUDO_USER={{ ssh_config.username }}"
+    ]
+    execute_command = "{% raw %}{{ .Vars }}{% endraw %} sudo -E {% raw %}{{ .Path }}{% endraw %}"
+  {%- else %}
+    environment_vars = [
+      "ISO_PATH={{ guest_additions.path }}"
+    ]
+    execute_command = "{% raw %}{{ .Vars }} {{ .Path }}{% endraw %}"
+  {%- endif %}
   }
 
   post-processor "vagrant" {

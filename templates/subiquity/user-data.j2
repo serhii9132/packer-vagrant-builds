@@ -27,15 +27,29 @@ autoinstall:
   late-commands:
     - lvextend -l +100%FREE /dev/ubuntu-vg/ubuntu-lv
     - resize2fs /dev/mapper/ubuntu--vg-ubuntu--lv
+    {% if ssh_config.is_rootless -%}
+    - echo "{{ ssh_config.username }} ALL=(ALL:ALL) NOPASSWD:ALL" > /target/etc/sudoers.d/{{ ssh_config.username }}
+    {%- else -%}
     - echo "PermitRootLogin yes" >> /target/etc/ssh/sshd_config.d/50-cloud-init.conf
     - mkdir -p /target/{{ ssh_config.username }}/.ssh
     - bash -c 'echo {{ ssh_config.pub_key }} > /target/{{ ssh_config.username }}/.ssh/authorized_keys'
     - chmod 700 /target/{{ ssh_config.username }}/.ssh
     - chmod 600 /target/{{ ssh_config.username }}/.ssh/authorized_keys
+  {%- endif %}
 
   user-data:
     hostname: ubuntu
+    {% if ssh_config.is_rootless -%}
+    users:
+      - name: {{ ssh_config.username }}
+        passwd: "{{ ssh_config.password }}"
+        shell: /bin/bash
+        lock_passwd: False
+        groups: sudo
+        ssh_authorized_keys:
+          - {{ ssh_config.pub_key }}
+    {% endif -%}
     chpasswd:
       expire: false
       users:
-      - {name: {{ ssh_config.username }}, password: "{{ ssh_config.hash_password }}"}
+      - {name: root, password: "{{ ssh_config.password }}"}

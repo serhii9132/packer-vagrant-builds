@@ -1,14 +1,16 @@
 #!/bin/bash
 
-ISO=/root/VBoxGuestAdditions.iso
 MNT_POINT=/mnt
 
 apt install -y build-essential perl dkms make gcc bzip2
 
-mount -o loop $ISO $MNT_POINT
+mount -o loop $ISO_PATH $MNT_POINT
 bash ${MNT_POINT}/VBoxLinuxAdditions.run
 
-usermod -aG vboxsf root
+if [[ -n $SUDO_USER ]]; then
+    usermod -aG vboxsf $SUDO_USER
+fi
+
 umount $MNT_POINT
 
-rm $ISO
+rm $ISO_PATH

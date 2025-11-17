@@ -45,8 +45,8 @@ source "vmware-iso" "{{ packer_builder_name }}" {
   vnc_port_max                    = "{{ vnc_config.port }}"
 
   ssh_username                    = "{{ ssh_config.username }}"
-  ssh_password                    = "{{ ssh_config.password }}"
   ssh_timeout                     = "{{ ssh_config.timeout }}"
+  ssh_private_key_file            = "{{ ssh_config.private_key_file }}"
 
   boot_wait                       = "{{ boot_control.boot_wait }}"
   boot_command = [
@@ -65,16 +65,16 @@ build {
   sources = ["sources.vmware-iso.{{ packer_builder_name }}"]
 
   provisioner "shell" {
-    inline = [
-      "sudo apt update",
-      "sudo apt install -y open-vm-tools"
-    ]
-  }
-
-  provisioner "shell" {
     scripts = [
+      "../../../scripts/install-open-vm-tool.sh",
       "../../../scripts/zero_space.sh"
     ]
+
+  {%- if ssh_config.is_rootless %}
+    execute_command = "sudo {% raw %}{{ .Path }}{% endraw %}"
+  {%- else %}
+    execute_command = "{% raw %}{{ .Path }}{% endraw %}"
+  {%- endif %}
   }
 
   post-processor "vagrant" {

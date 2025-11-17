@@ -1,8 +1,39 @@
 import yaml
 import os
 import argparse
+from dotenv import load_dotenv
 from typing import Any, Dict
 from jinja2 import Environment, FileSystemLoader
+
+def init_parse_arg() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Generate Packer configurations for various OS and hypervisors.")
+    
+    hypervisor_group = parser.add_mutually_exclusive_group(required=True)
+    hypervisor_group.add_argument('--virtualbox', action='store_true', help="Generate configuration for VirtualBox.")
+    hypervisor_group.add_argument('--vmware', action='store_true', help="Generate configuration for VMware Workstation.")
+    
+    os_group = parser.add_mutually_exclusive_group(required=True)
+    os_group.add_argument('--all', action='store_true', help="Generate configurations for all supported OSes (Ubuntu and Debian).")
+    os_group.add_argument('--ubuntu', action='store_true', help="Generate configuration only for Ubuntu.")
+    os_group.add_argument('--debian', action='store_true', help="Generate configuration only for Debian.")
+
+    parser.add_argument('--rootless', action='store_true', help="Generate a rootless image configuration (for testing without root access).")
+
+    return parser.parse_args()
+
+def update_common_config(common_config: dict[str, str], is_rootless: bool):
+    load_dotenv()
+    
+    common_config['ssh_config'].update({"password": os.getenv('PASSWORD')})
+    common_config['ssh_config'].update({"private_key_file": os.getenv('PRIVATE_KEY_FILE')})
+    common_config['ssh_config'].update({"pub_key": os.getenv('PUBLIC_KEY')})
+
+    if is_rootless:
+        common_config['ssh_config'].update({"is_rootless": is_rootless})
+        common_config['ssh_config'].update({"username": os.getenv('SUDO_USER')})
+    else:
+        common_config['ssh_config'].update({"is_rootless": is_rootless})
+        common_config['ssh_config'].update({"username": "root"})
 
 def load_yaml(file_path: str) -> Dict[str, Any]:
     try:
@@ -24,7 +55,7 @@ def merge_configs(dict1: Dict[str, any], dict2: Dict[str, any]) -> Dict[str, any
             merged[key] = value
     return merged
 
-def generate_packer_config(os_name: str, hypervisor: str, configs_dir: str, templates_dir: str, artifacts_base_dir: str) -> None:
+def generate_packer_config(os_name: str, is_rootless: bool, hypervisor: str, configs_dir: str, templates_dir: str, artifacts_base_dir: str) -> None:
     print(f"\n--- Generating configuration for {os_name.capitalize()} on {hypervisor.capitalize()} ---")
 
     os_configs = {
@@ -45,12 +76,14 @@ def generate_packer_config(os_name: str, hypervisor: str, configs_dir: str, temp
     file_hypervisor_settings = os.path.join(configs_dir, f'{hypervisor}.yaml')
 
     common_config = load_yaml(file_common_settings)
+    update_common_config(common_config, is_rootless)
+
     os_specific_config = load_yaml(file_os_settings)
     hypervisor_specific_config = load_yaml(file_hypervisor_settings)
 
     merged_config = merge_configs(common_config, os_specific_config)
     merged_config = merge_configs(merged_config, hypervisor_specific_config)
-    
+
     base_env = Environment(loader=FileSystemLoader(templates_dir))
     
     os_artifacts_dir = os.path.join(artifacts_base_dir, hypervisor, os_name)
@@ -91,21 +124,9 @@ def generate_packer_config(os_name: str, hypervisor: str, configs_dir: str, temp
             except Exception as e:
                 print(f"  Error rendering template '{filename}': {e}")
 
-
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Generate Packer configurations for various OS and hypervisors.")
-    
-    hypervisor_group = parser.add_mutually_exclusive_group(required=True)
-    hypervisor_group.add_argument('--virtualbox', action='store_true', help="Generate configuration for VirtualBox.")
-    hypervisor_group.add_argument('--vmware', action='store_true', help="Generate configuration for VMware Workstation.")
-    
-    os_group = parser.add_mutually_exclusive_group(required=True)
-    os_group.add_argument('--all', action='store_true', help="Generate configurations for all supported OSes (Ubuntu and Debian).")
-    os_group.add_argument('--ubuntu', action='store_true', help="Generate configuration only for Ubuntu.")
-    os_group.add_argument('--debian', action='store_true', help="Generate configuration only for Debian.")
+    args = init_parse_arg()
 
-    args = parser.parse_args()
-    
     hypervisor = None
     if args.virtualbox:
         hypervisor = "virtualbox"
@@ -120,15 +141,16 @@ def main() -> None:
     elif args.debian:
         os_to_generate = ["debian"]
 
+    is_rootless = args.rootless
     base_dir = os.path.dirname(os.path.abspath(__file__))
     configs_dir = os.path.join(base_dir, 'configs')
     templates_dir = os.path.join(base_dir, 'templates')
     artifacts_base_dir = os.path.join(base_dir, 'artifacts')
-
+    
     os.makedirs(artifacts_base_dir, exist_ok=True)
 
     for os_name in os_to_generate:
-        generate_packer_config(os_name, hypervisor, configs_dir, templates_dir, artifacts_base_dir)
+        generate_packer_config(os_name, is_rootless, hypervisor, configs_dir, templates_dir, artifacts_base_dir)
 
 if __name__ == "__main__":
     main()

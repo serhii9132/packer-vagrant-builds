@@ -28,10 +28,17 @@ d-i time/zone string {{ guest_interaction.timezone }}
 
 # Create root uer 
 d-i passwd/root-login boolean true
-d-i passwd/root-password password {{ ssh_config.password }}
-d-i passwd/root-password-again password {{ ssh_config.password }}
+d-i passwd/root-password-crypted password {{ ssh_config.password }}
 
+{% if ssh_config.is_rootless -%}
+# Create a normal user account
+d-i passwd/user-fullname string {{ ssh_config.username }}
+d-i passwd/username string {{ ssh_config.username }}
+d-i passwd/user-password-crypted password {{ ssh_config.password }}
+{%- else -%}
+# Create a normal user account now?
 d-i passwd/make-user boolean false
+{%- endif %}
 
 # Disk configuration
 d-i partman-auto/method string lvm
@@ -104,8 +111,18 @@ d-i cdrom-detect/eject boolean false
 d-i finish-install/reboot_in_progress note
 
 d-i preseed/late_command string \
- echo "PermitRootLogin yes" >> /target/etc/ssh/sshd_config.d/50-cloud-init.conf; \
- in-target mkdir -p /{{ ssh_config.username }}/.ssh; \
- in-target bash -c 'echo "{{ ssh_config.pub_key }}" > /{{ ssh_config.username }}/.ssh/authorized_keys'; \
- in-target chmod 700 /{{ ssh_config.username }}/.ssh; \
- in-target chmod 600 /{{ ssh_config.username }}/.ssh/authorized_keys
+echo "PermitRootLogin yes" >> /target/etc/ssh/sshd_config.d/50-cloud-init.conf; \
+{%- if ssh_config.is_rootless %}
+ in-target bash -c 'echo "{{ ssh_config.username }} ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/{{ ssh_config.username }}'; \
+ in-target usermod -aG sudo {{ ssh_config.username }}; \
+ in-target mkdir -p /home/{{ ssh_config.username }}/.ssh; \
+ in-target bash -c 'echo "{{ ssh_config.pub_key }}" > /home/{{ ssh_config.username }}/.ssh/authorized_keys'; \
+ in-target chown -R {{ ssh_config.username }}:{{ ssh_config.username }} /home/{{ ssh_config.username }}/.ssh; \
+ in-target chmod 700 /home/{{ ssh_config.username }}/.ssh; \
+ in-target chmod 600 /home/{{ ssh_config.username }}/.ssh/authorized_keys
+{%- else %}
+ in-target mkdir -p /root/.ssh; \
+ in-target bash -c 'echo "{{ ssh_config.pub_key }}" > /root/.ssh/authorized_keys'; \
+ in-target chmod 700 /root/.ssh; \
+ in-target chmod 600 /root/.ssh/authorized_keys
+{%- endif %}
