@@ -111,7 +111,6 @@ d-i cdrom-detect/eject boolean false
 d-i finish-install/reboot_in_progress note
 
 d-i preseed/late_command string \
-echo "PermitRootLogin yes" >> /target/etc/ssh/sshd_config.d/50-cloud-init.conf; \
 {%- if ssh_config.is_rootless %}
  in-target bash -c 'echo "{{ ssh_config.username }} ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/{{ ssh_config.username }}'; \
  in-target usermod -aG sudo {{ ssh_config.username }}; \
@@ -121,6 +120,7 @@ echo "PermitRootLogin yes" >> /target/etc/ssh/sshd_config.d/50-cloud-init.conf; 
  in-target chmod 700 /home/{{ ssh_config.username }}/.ssh; \
  in-target chmod 600 /home/{{ ssh_config.username }}/.ssh/authorized_keys
 {%- else %}
+ in-target bash -c 'echo "PermitRootLogin yes" >> /etc/ssh/sshd_config.d/50-cloud-init.conf'; \
  in-target mkdir -p /root/.ssh; \
  in-target bash -c 'echo "{{ ssh_config.pub_key }}" > /root/.ssh/authorized_keys'; \
  in-target chmod 700 /root/.ssh; \
