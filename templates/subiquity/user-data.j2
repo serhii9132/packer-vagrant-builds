@@ -19,6 +19,10 @@ autoinstall:
   packages:
     - python3
     - wget
+    - rsync
+    {%- if type == 'vmware' %} 
+    - open-vm-tools
+    {%- endif %}
 
   timezone: {{ guest_interaction.timezone }}
 

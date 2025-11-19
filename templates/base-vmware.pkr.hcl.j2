@@ -65,10 +65,7 @@ build {
   sources = ["sources.vmware-iso.{{ packer_builder_name }}"]
 
   provisioner "shell" {
-    scripts = [
-      "../../../scripts/install-open-vm-tool.sh",
-      "../../../scripts/zero_space.sh"
-    ]
+    script = "../../../scripts/zero_space.sh"
 
   {%- if ssh_config.is_rootless %}
     execute_command = "sudo {% raw %}{{ .Path }}{% endraw %}"
