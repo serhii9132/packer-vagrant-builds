@@ -1,3 +1,5 @@
+type: "vmware"
+
 vm_settings:
   version: 21
   is_headless: true

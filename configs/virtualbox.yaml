@@ -1,3 +1,5 @@
+type: "virtualbox"
+
 vm_settings:
   gfx_vram_size: 16
 
