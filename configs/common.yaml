@@ -7,7 +7,7 @@ vm_settings:
 
 iso_config:
   interface: "sata"
-  source: "../../iso" 
+  source: ".cache/iso" 
 
 guest_interaction:
   communicator: "ssh"

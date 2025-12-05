@@ -12,7 +12,7 @@ packer {
 }
 
 locals {
-  output_directory = "builds/${formatdate("YYYY-MM-DD_hh-mm", timestamp())}"
+  output_directory = "artifacts/{{ hypervisor_name }}/{{ packer_builder_name }}/builds/${formatdate("YYYY-MM-DD_hh-mm", timestamp())}"
 }
 
 source "virtualbox-iso" "{{ packer_builder_name }}" {
@@ -46,7 +46,7 @@ source "virtualbox-iso" "{{ packer_builder_name }}" {
 
   output_directory         = local.output_directory
   
-  http_directory           = "{{ boot_control.http_directory }}"
+  http_directory           = "artifacts/{{ hypervisor_name }}/{{ packer_builder_name }}/{{ boot_control.http_directory }}"
 
   boot_wait                = "{{ boot_control.boot_wait }}"
   boot_command = [
@@ -74,8 +74,8 @@ build {
 
   provisioner "shell" {
     scripts = [
-      "../../../scripts/install-vbox-guest-add.sh",
-      "../../../scripts/zero_space.sh"
+      "scripts/install-vbox-guest-add.sh",
+      "scripts/zero_space.sh"
     ]
 
   {%- if ssh_config.is_rootless %}

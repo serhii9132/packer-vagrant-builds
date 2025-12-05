@@ -12,7 +12,7 @@ packer {
 }
 
 locals {
-  output_directory = "builds/${formatdate("YYYY-MM-DD_hh-mm", timestamp())}"
+  output_directory = "artifacts{{ hypervisor_name }}/{{ packer_builder_name }}/builds/${formatdate("YYYY-MM-DD_hh-mm", timestamp())}"
 }
 
 source "vmware-iso" "{{ packer_builder_name }}" {
@@ -38,7 +38,7 @@ source "vmware-iso" "{{ packer_builder_name }}" {
   output_directory                = abspath("${local.output_directory}")
 
   communicator                    = "{{ guest_interaction.communicator }}"
-  http_directory                  = "{{ boot_control.http_directory }}"
+  http_directory                  = "artifacts/{{ hypervisor_name }}/{{ packer_builder_name }}/{{ boot_control.http_directory }}"
 
   vnc_bind_address                = "{{ vnc_config.address }}"
   vnc_port_min                    = "{{ vnc_config.port }}"
@@ -65,7 +65,7 @@ build {
   sources = ["sources.vmware-iso.{{ packer_builder_name }}"]
 
   provisioner "shell" {
-    script = "../../../scripts/zero_space.sh"
+    script = "scripts/zero_space.sh"
 
   {%- if ssh_config.is_rootless %}
     execute_command = "sudo {% raw %}{{ .Path }}{% endraw %}"

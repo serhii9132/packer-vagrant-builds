@@ -1,4 +1,4 @@
-type: "vmware"
+hypervisor_name: "vmware"
 
 vm_settings:
   version: 21

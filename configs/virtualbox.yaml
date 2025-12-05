@@ -1,4 +1,4 @@
-type: "virtualbox"
+hypervisor_name: "virtualbox"
 
 vm_settings:
   gfx_vram_size: 16
