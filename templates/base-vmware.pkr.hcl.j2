@@ -64,8 +64,17 @@ source "vmware-iso" "{{ packer_builder_name }}" {
 build {
   sources = ["sources.vmware-iso.{{ packer_builder_name }}"]
 
+  provisioner "file" {
+    source = "./files/regenerate_ssh_host_keys.service"
+    destination = "/tmp/regenerate_ssh_host_keys.service"
+  }
+
   provisioner "shell" {
-    script = "scripts/zero_space.sh"
+    scripts = [
+      "scripts/systemctl.sh",
+      "scripts/cleanup.sh",
+      "scripts/zero_space.sh"
+    ]
 
   {%- if ssh_config.is_rootless %}
     execute_command = "sudo {% raw %}{{ .Path }}{% endraw %}"

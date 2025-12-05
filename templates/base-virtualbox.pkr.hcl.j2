@@ -72,9 +72,16 @@ source "virtualbox-iso" "{{ packer_builder_name }}" {
 build {
   sources = ["sources.virtualbox-iso.{{ packer_builder_name }}"]
 
+  provisioner "file" {
+    source = "./files/regenerate_ssh_host_keys.service"
+    destination = "/tmp/regenerate_ssh_host_keys.service"
+  }
+
   provisioner "shell" {
     scripts = [
       "scripts/install-vbox-guest-add.sh",
+      "scripts/systemctl.sh",
+      "scripts/cleanup.sh",
       "scripts/zero_space.sh"
     ]
 
