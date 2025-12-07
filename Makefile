@@ -51,6 +51,3 @@ debian-vmware: $(PYTHON) $(ENV_FILE)
 
 clean: $(VENV)
 	rm -rf $(VENV)
-
-clean_artifacts: $(ARTIFACTS_DIR)
-	rm -rf $(ARTIFACTS_DIR)
