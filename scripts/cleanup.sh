@@ -5,7 +5,7 @@ apt -y autoremove --purge
 apt -y clean
 apt -y autoclean
 
-truncate -s 0 /etc/machine-ide
+truncate -s 0 /etc/machine-id
 rm -f /var/lib/dbus/machine-id
 ln -s /etc/machine-id /var/lib/dbus/machine-id
 
