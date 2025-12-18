@@ -21,7 +21,7 @@ autoinstall:
     - wget
     - rsync
     - bash-completion
-    {%- if type == 'vmware' %} 
+    {%- if hypervisor_name == 'vmware' %} 
     - open-vm-tools
     {%- endif %}
 
