@@ -12,7 +12,7 @@ packer {
 }
 
 locals {
-  output_directory = "artifacts{{ hypervisor_name }}/{{ packer_builder_name }}/builds/${formatdate("YYYY-MM-DD_hh-mm", timestamp())}"
+  output_directory = "artifacts/{{ hypervisor_name }}/{{ packer_builder_name }}/builds/${formatdate("YYYY-MM-DD_hh-mm", timestamp())}"
 }
 
 source "vmware-iso" "{{ packer_builder_name }}" {
