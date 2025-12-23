@@ -52,11 +52,11 @@ PUBLIC_KEY="ssh-ed25519 AAAABBBBCCCC1234..."
 5. Vagrant boxes and the OVA file will be stored in the builds/${timestamp} directory.
 
 ### Tested With
-- Packer: v1.14.2
+- Packer: v1.14.3
 - packer-plugin-vagrant: 1.1.6
 - packer-plugin-virtualbox: 1.1.3
 - packer-plugin-vmware: 1.2.0
 - VirtualBox: 7.2.4
-- VMware Workstation Pro: 17.6.2
+- VMware Workstation Pro: 25H2
 - Vagrant: 2.4.9
 - vagrant-vmware-desktop: 3.0.5
