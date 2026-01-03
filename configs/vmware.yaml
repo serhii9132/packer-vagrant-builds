@@ -3,6 +3,7 @@ hypervisor_name: "vmware"
 vm_settings:
   version: 22
   is_headless: true
+  network_adapter_type: "vmxnet3"
   is_vmx_remove_ethernet_interfaces: true
   is_skip_export: true
 

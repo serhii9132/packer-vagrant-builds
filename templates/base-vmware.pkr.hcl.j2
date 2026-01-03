@@ -27,6 +27,7 @@ source "vmware-iso" "{{ packer_builder_name }}" {
   cpus                            = {{ vm_settings.cpus }}
   cores                           = {{ vm_settings.cpus }}
   memory                          = {{ vm_settings.memory }}
+  network_adapter_type            = "{{ vm_settings.network_adapter_type }}"
   disk_size                       = {{ vm_settings.disk_size }}
   disk_type_id                    = {{ disk_config.type_id }}
   disk_adapter_type               = "{{ disk_config.adapter_type }}"
@@ -55,10 +56,6 @@ source "vmware-iso" "{{ packer_builder_name }}" {
     {% endfor -%}
   ]
   shutdown_command                = "{{ boot_control.shutdown_command }}"
-
-  vmx_data = {
-    "ethernet0.virtualdev" = "vmxnet3"
-  }
 }
 
 build {
