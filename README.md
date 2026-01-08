@@ -8,7 +8,7 @@ A Python script combines OS-specific and hypervisor-specific YAML settings with 
 - [vmware-iso](https://developer.hashicorp.com/packer/integrations/hashicorp/vmware/latest/components/builder/iso#configuration-reference)
 
 ### Available OS Images
-- Debian 12.12
+- Debian 13.2
 - Ubuntu 24.04.3 LTS
 
 ### Attention
